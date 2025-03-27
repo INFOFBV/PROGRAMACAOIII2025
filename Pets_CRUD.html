@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de PETS</title>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.js"></script>
+    <script src="https://unpkg.com/vuelidate@0.7.4/dist/vuelidate.min.js"></script>
+    <script src="https://unpkg.com/vuelidate@0.7.4/dist/validators.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+</head>
+<body>
+    <div id="app" class="container">
+        <h2>Cadastro de PETS</h2>
+
+        <!-- Tabela de Pets -->
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Nome</th>
+                    <th>CPF Titular</th>
+                    <th>Raça</th>
+                    <th>Data de Nascimento</th>
+                    <th>Vacinas</th>
+                    <th>Valor</th>
+                    <th>Alterar</th>
+                    <th>Remover</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="(p, indice) in pets" :key="indice">
+                    <td>{{ indice + 1 }}</td>
+                    <td>{{ p.nome }}</td>
+                    <td>{{ p.cpf }}</td>
+                    <td>{{ p.raca }}</td>
+                    <td>{{ p.data_nascimento }}</td>
+                    <td>{{ p.vacinas }}</td>
+                    <td>{{ p.valor }}</td>
+                    <td><button @click="editPet(indice)" class="btn btn-warning" type="button">Alterar</button></td>
+                    <td><button @click="remPet(indice)" class="btn btn-danger" type="button">Remover</button></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Formulário de Cadastro de Pet -->
+        <form id="formulario" @submit.prevent="addPet">
+            <h3>Cadastro de PET</h3>
+
+            <div class="form-group">
+                <label for="inputNome">Nome:</label>
+                <input type="text" id="inputNome" v-model.trim="$v.novo_pet.nome.$model" class="form-control">
+                <div class="error" v-if="!$v.novo_pet.nome.$pending && !$v.novo_pet.nome.$model">Nome é obrigatório (mínimo 4 e máximo 12 caracteres).</div>
+            </div>
+
+            <div class="form-group">
+                <label for="inputCPF">CPF Titular:</label>
+                <input type="text" id="inputCPF" v-model.trim="$v.novo_pet.cpf.$model" class="form-control">
+                <div class="error" v-if="!$v.novo_pet.cpf.$pending && !$v.novo_pet.cpf.$model">CPF é obrigatório.</div>
+            </div>
+
+            <div class="form-group">
+                <label for="inputRaca">Raça:</label>
+                <select v-model="$v.novo_pet.raca.$model" id="inputRaca" class="form-control">
+                    <option value="">Selecione uma raça</option>
+                    <option v-for="r in racas" :key="r" :value="r">{{ r }}</option>
+                </select>
+                <div class="error" v-if="!$v.novo_pet.raca.$pending && !$v.novo_pet.raca.$model">Raça é obrigatória.</div>
+            </div>
+
+            <div class="form-group">
+                <label for="inputDataNascimento">Data de Nascimento:</label>
+                <input type="date" id="inputDataNascimento" v-model="$v.novo_pet.data_nascimento.$model" class="form-control">
+                <div class="error" v-if="!$v.novo_pet.data_nascimento.$pending && !$v.novo_pet.data_nascimento.$model">Data de nascimento é obrigatória e deve ser no passado ou hoje.</div>
+            </div>
+
+            <div class="form-group">
+                <label for="inputVacinas">Vacinas:</label>
+                <input type="text" id="inputVacinas" v-model="$v.novo_pet.vacinas.$model" class="form-control">
+                <div class="error" v-if="!$v.novo_pet.vacinas.$pending && !$v.novo_pet.vacinas.$model">Vacinas são obrigatórias.</div>
+            </div>
+
+            <div class="form-group">
+                <label for="inputValor">Valor:</label>
+                <input type="number" id="inputValor" v-model="$v.novo_pet.valor.$model" class="form-control">
+                <div class="error" v-if="!$v.novo_pet.valor.$pending && !$v.novo_pet.valor.$model">Valor é obrigatório e deve ser maior ou igual a 100.</div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" :disabled="$v.$invalid">Salvar</button>
+            <button type="button" @click="cleanFormulario" class="btn btn-secondary">Limpar</button>
+        </form>
+    </div>
+
+    <script>
+        Vue.use(window.vuelidate.default);
+        const { required, minLength, maxLength, minValue, pastDate } = window.validators;
+
+        new Vue({
+            el: '#app',
+            data: {
+                racas: ['Labrador', 'Poodle', 'Bulldog', 'Pastor Alemão'],
+                pets: [
+                    { nome: 'Rex', cpf: '12345678900', raca: 'Labrador', data_nascimento: '2022-05-01', vacinas: 'Antirrábica', valor: 200 }
+                ],
+                novo_pet: {
+                    nome: '',
+                    cpf: '',
+                    raca: '',
+                    data_nascimento: '',
+                    vacinas: '',
+                    valor: ''
+                }
+            },
+            validations: {
+                novo_pet: {
+                    nome: { required, minLength: minLength(4), maxLength: maxLength(12) },
+                    cpf: { required },
+                    raca: { required },
+                    data_nascimento: { required, pastDate: value => value && new Date(value) <= new Date() },
+                    vacinas: { required },
+                    valor: { required, minValue: minValue(100) }
+                }
+            },
+            methods: {
+                addPet() {
+                    if (this.$v.$invalid) {
+                        alert('Corrija os erros antes de salvar.');
+                        return;
+                    }
+
+                    this.pets.push({ ...this.novo_pet });
+                    alert('Pet cadastrado com sucesso!');
+                    this.cleanFormulario();
+                },
+                cleanFormulario() {
+                    this.novo_pet = {
+                        nome: '',
+                        cpf: '',
+                        raca: '',
+                        data_nascimento: '',
+                        vacinas: '',
+                        valor: ''
+                    };
+                    this.$v.$reset();
+                },
+                editPet(index) {
+                    this.novo_pet = { ...this.pets[index] };
+                },
+                remPet(index) {
+                    if (confirm('Deseja remover o pet?')) {
+                        this.pets.splice(index, 1);
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
