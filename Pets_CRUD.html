@@ -15,7 +15,6 @@
     <div id="app" class="container">
         <h2>Cadastro de PETS</h2>
 
-        <!-- Tabela de Pets -->
         <table class="table table-striped">
             <thead>
                 <tr>
@@ -45,20 +44,19 @@
             </tbody>
         </table>
 
-        <!-- Formulário de Cadastro de Pet -->
         <form id="formulario" @submit.prevent="addPet">
             <h3>Cadastro de PET</h3>
 
             <div class="form-group">
                 <label for="inputNome">Nome:</label>
                 <input type="text" id="inputNome" v-model.trim="$v.novo_pet.nome.$model" class="form-control">
-                <div class="error" v-if="!$v.novo_pet.nome.$pending && !$v.novo_pet.nome.$model">Nome é obrigatório (mínimo 4 e máximo 12 caracteres).</div>
+                <div class="text-danger" v-if="$v.novo_pet.nome.$error">Nome deve ter entre 4 e 12 caracteres.</div>
             </div>
 
             <div class="form-group">
                 <label for="inputCPF">CPF Titular:</label>
                 <input type="text" id="inputCPF" v-model.trim="$v.novo_pet.cpf.$model" class="form-control">
-                <div class="error" v-if="!$v.novo_pet.cpf.$pending && !$v.novo_pet.cpf.$model">CPF é obrigatório.</div>
+                <div class="text-danger" v-if="$v.novo_pet.cpf.$error">CPF inválido (deve conter 11 dígitos numéricos).</div>
             </div>
 
             <div class="form-group">
@@ -67,25 +65,25 @@
                     <option value="">Selecione uma raça</option>
                     <option v-for="r in racas" :key="r" :value="r">{{ r }}</option>
                 </select>
-                <div class="error" v-if="!$v.novo_pet.raca.$pending && !$v.novo_pet.raca.$model">Raça é obrigatória.</div>
+                <div class="text-danger" v-if="$v.novo_pet.raca.$error">Raça é obrigatória.</div>
             </div>
 
             <div class="form-group">
                 <label for="inputDataNascimento">Data de Nascimento:</label>
                 <input type="date" id="inputDataNascimento" v-model="$v.novo_pet.data_nascimento.$model" class="form-control">
-                <div class="error" v-if="!$v.novo_pet.data_nascimento.$pending && !$v.novo_pet.data_nascimento.$model">Data de nascimento é obrigatória e deve ser no passado ou hoje.</div>
+                <div class="text-danger" v-if="$v.novo_pet.data_nascimento.$error">Data deve ser no passado ou hoje.</div>
             </div>
 
             <div class="form-group">
                 <label for="inputVacinas">Vacinas:</label>
                 <input type="text" id="inputVacinas" v-model="$v.novo_pet.vacinas.$model" class="form-control">
-                <div class="error" v-if="!$v.novo_pet.vacinas.$pending && !$v.novo_pet.vacinas.$model">Vacinas são obrigatórias.</div>
+                <div class="text-danger" v-if="$v.novo_pet.vacinas.$error">Informe pelo menos uma vacina.</div>
             </div>
 
             <div class="form-group">
                 <label for="inputValor">Valor:</label>
                 <input type="number" id="inputValor" v-model="$v.novo_pet.valor.$model" class="form-control">
-                <div class="error" v-if="!$v.novo_pet.valor.$pending && !$v.novo_pet.valor.$model">Valor é obrigatório e deve ser maior ou igual a 100.</div>
+                <div class="text-danger" v-if="$v.novo_pet.valor.$error">Valor deve ser no mínimo 100.</div>
             </div>
 
             <button type="submit" class="btn btn-primary" :disabled="$v.$invalid">Salvar</button>
@@ -95,15 +93,13 @@
 
     <script>
         Vue.use(window.vuelidate.default);
-        const { required, minLength, maxLength, minValue, pastDate } = window.validators;
+        const { required, minLength, maxLength, minValue } = window.validators;
 
         new Vue({
             el: '#app',
             data: {
                 racas: ['Labrador', 'Poodle', 'Bulldog', 'Pastor Alemão'],
-                pets: [
-                    { nome: 'Rex', cpf: '12345678900', raca: 'Labrador', data_nascimento: '2022-05-01', vacinas: 'Antirrábica', valor: 200 }
-                ],
+                pets: [],
                 novo_pet: {
                     nome: '',
                     cpf: '',
@@ -116,9 +112,9 @@
             validations: {
                 novo_pet: {
                     nome: { required, minLength: minLength(4), maxLength: maxLength(12) },
-                    cpf: { required },
+                    cpf: { required, minLength: minLength(11), maxLength: maxLength(11) },
                     raca: { required },
-                    data_nascimento: { required, pastDate: value => value && new Date(value) <= new Date() },
+                    data_nascimento: { required },
                     vacinas: { required },
                     valor: { required, minValue: minValue(100) }
                 }
@@ -129,20 +125,12 @@
                         alert('Corrija os erros antes de salvar.');
                         return;
                     }
-
                     this.pets.push({ ...this.novo_pet });
                     alert('Pet cadastrado com sucesso!');
                     this.cleanFormulario();
                 },
                 cleanFormulario() {
-                    this.novo_pet = {
-                        nome: '',
-                        cpf: '',
-                        raca: '',
-                        data_nascimento: '',
-                        vacinas: '',
-                        valor: ''
-                    };
+                    this.novo_pet = { nome: '', cpf: '', raca: '', data_nascimento: '', vacinas: '', valor: '' };
                     this.$v.$reset();
                 },
                 editPet(index) {
