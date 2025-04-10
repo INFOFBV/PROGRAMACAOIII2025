@@ -45,7 +45,7 @@ git remote add entrega https://github.com/INFOFBV/prova_programacao_iii_emi_2025
 
 6. Envie os arquivos para o repositório de entrega da prova: Use o comando abaixo para enviar (fazer o push) os arquivos para o repositório de entrega:
 
-git push entrega master
+git push (usuário de entrega) master
 
 -> Nota: Se o repositório de entrega usar outro nome para o branch principal (por exemplo, main), você deve alterar master para main.
 
