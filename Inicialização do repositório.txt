@@ -1,0 +1,80 @@
+*Inicialização do repositório*
+
+git init
+
+git add --all
+git commit -m "inclusão dos arquivos revisao.html e .gitignore"
+git remote add INFOFBV https://github.com/INFOFBV/programacao_iii_emi_2025.git
+git push INFOFBV
+
+----
+
+*Envio de alterações*
+
+git add --all
+git commit -m "inclusão dos arquivos revisao.html e .gitignore"
+git push INFOFBV
+
+-----
+
+*Para baixar o repositório em outra máquina*
+
+git clone https://github.com/INFOFBV/programacao_iii_emi_2025.git
+
+
+----------------------------------------
+[EXEMPLO DE COMO ENVIAR PARA UM GIT DA PROVA DO TELMO]
+
+1. Crie um repositório local (se não tiver um): Primeiro, no diretório do seu projeto, inicialize o repositório Git:
+
+git init
+
+2. Adicione o arquivo à pasta do repositório local: Coloque o arquivo prova_exemplo.html (ou outro arquivo de prova) na pasta do repositório local.
+
+3. Adicione os arquivos ao controle de versão: Use o comando abaixo para adicionar todos os arquivos à área de staging.
+
+git add --all
+
+4. Faça o commit dos arquivos: Agora, faça o commit dos arquivos adicionados. Coloque uma mensagem que faça sentido para a entrega da prova.
+
+git commit -m "Entrega da prova - Exemplo de código HTML"
+
+5. Adicione o repositório remoto de entrega da prova: Agora, você precisa adicionar o repositório remoto, ou seja, o repositório onde você vai enviar seu arquivo. No caso, será o repositório de entrega de prova no GitHub.
+
+git remote add entrega https://github.com/INFOFBV/prova_programacao_iii_emi_2025.git
+
+6. Envie os arquivos para o repositório de entrega da prova: Use o comando abaixo para enviar (fazer o push) os arquivos para o repositório de entrega:
+
+git push entrega master
+
+-> Nota: Se o repositório de entrega usar outro nome para o branch principal (por exemplo, main), você deve alterar master para main.
+
+----
+
+Exemplo:
+
+# Inicializa o repositório local
+git init
+
+# Adiciona os arquivos ao controle de versão
+git add --all
+
+# Faz o commit com uma mensagem explicativa
+git commit -m "Entrega da prova - Exemplo de código HTML"
+
+# Adiciona o repositório remoto de entrega da prova
+git remote add entrega https://github.com/INFOFBV/prova_programacao_iii_emi_2025.git
+
+# Envia o arquivo para o repositório de entrega
+git push entrega master (SE NÃO FOR MAIN)
+
+----------------------------------
+
+Caso o Repositório de Entrega Já Exista:
+
+git clone https://github.com/INFOFBV/prova_programacao_iii_emi_2025.git
+
+
+
+
+
